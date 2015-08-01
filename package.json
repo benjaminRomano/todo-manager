@@ -1,0 +1,33 @@
+{
+  "name": "todo-manager",
+  "main": "./lib/main",
+  "version": "0.0.0",
+  "description": "Manage TODOs, NOTEs and more from inside your editor",
+  "keywords": [
+    "todo",
+    "list",
+    "manager"
+  ],
+  "repository": "https://github.com/benjaminRomano/todo-manager",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0"
+  },
+  "dependencies": {
+    "ansi-to-html": "^0.3.0",
+    "atom-bottom-dock": "^0.2.3",
+    "lodash": "^3.10.0",
+    "minimatch": "^2.0.10",
+    "space-pen": "^5.1.1"
+  },
+  "packageDependencies": {
+    "bottom-dock": "^0.1.0"
+  },
+  "consumedServices": {
+    "bottom-dock": {
+      "versions": {
+        "^0.0.0": "consumeBottomDock"
+      }
+    }
+  }
+}

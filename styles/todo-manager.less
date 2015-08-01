@@ -1,0 +1,62 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+.todo-manager {
+  height: 100%;
+  overflow: auto;
+  display: block;
+
+  ul {
+    max-height: 100%;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    margin: 0;
+    padding: 0 0px 5px 5px;
+    font-size: 13px;
+
+    span {
+      cursor: pointer;
+      padding: 3px;
+
+      &:hover {
+        color: @text-color-highlight;
+        background-color: @background-color-selected;
+        border-radius: 3px;
+      }
+
+      &:active {
+        color: @text-color-selected;
+      }
+    }
+  }
+
+  .filters {
+    padding-bottom: 5px;
+    display: inline-block;
+
+    .filter-label {
+      padding: 0 5px 0 5px
+    }
+  }
+
+  .todo-section {
+    padding-left: 5px;
+
+    .todo-sub-group-header {
+      margin-left: 10px;
+    }
+
+    ul {
+      padding-left: 15px;
+    }
+
+
+  }
+}
