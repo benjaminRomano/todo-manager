@@ -3,7 +3,7 @@
 {$} = require('space-pen')
 _ = require('lodash')
 
-RegexMatcherUtil = require('../RegexMatcherUtil')
+RegexMatcherUtil = require('../regexMatcherUtil')
 TodoSection = require('./todo-section')
 
 class TodoManager extends DockPaneView
