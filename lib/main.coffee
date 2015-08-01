@@ -1,5 +1,5 @@
 {CompositeDisposable} = require 'atom'
-RegexMatcherUtil = require('./RegexMatcherUtil')
+RegexMatcherUtil = require('./regexMatcherUtil')
 TodoManager = require('./views/todo-manager')
 
 module.exports =
@@ -34,6 +34,15 @@ module.exports =
     @subscriptions = new CompositeDisposable()
     @todoPanes = []
     results = []
+
+    packageFound = atom.packages.getAvailablePackageNames()
+      .indexOf('bottom-dock') != -1
+    if not packageFound
+      atom.notifications.addError('Could not find Bottom-Dock', {
+        detail: 'Todo-Manager: The bottom-dock package is a dependency. \n
+        Learn more about bottom-dock here: https://atom.io/packages/bottom-dock'
+        dismissable: true
+      })
 
     @subscriptions.add(atom.commands.add('atom-workspace',
     'todo-manager:add': => @add())
