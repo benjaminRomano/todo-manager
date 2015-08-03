@@ -15,7 +15,7 @@ Manage TODOs, NOTEs, etc. from inside Atom.
 
 ##### Config
 * regexes: An array of objects. eg. [{ regexName: "FIXME", regexString: "/\\b@?TODO:?\\s(.+$)/g" }]
-* ignoredNames: An array of strings. eg. [ '*/node_modules/' ]
+* ignoredNames: An array of strings. eg. [ '**/node_modules/**' ]
 
 Note: the config for todo-manager will be empty since the default values aren't saved to the config file.
 If you want to keep the default settings you will also need to include the values below:
@@ -36,12 +36,12 @@ If you want to keep the default settings you will also need to include the value
       }
     ]
     ignoredNames: [
-      "*/node_modules/"
-      "*/vendor/"
-      "*/bower_components/"
+      "**/node_modules/**"
+      "**/vendor/**"
+      "**/bower_components/**"
     ]
 ````
-Note: 
+Note:
 * Adding too many regexes can cause performance problems.
 
 
