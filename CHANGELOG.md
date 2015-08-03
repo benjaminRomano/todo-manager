@@ -1,3 +1,6 @@
+## 0.1.4
+* Fixed minimatch code
+
 ## 0.1.3
 * Fixed Removing pane
 * Made paths relative

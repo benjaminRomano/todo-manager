@@ -1,4 +1,4 @@
-{Minimatch} = require('minimatch')
+minimatch = require('minimatch')
 path = require('path')
 
 class RegexMatcherUtil
@@ -96,11 +96,11 @@ class RegexMatcherUtil
 
   isIgnored: (path, ignoredNames) ->
     if not path
-      return false
-      
+      return true
+
     for ignoredName in ignoredNames
-      ignoredMinimatch = new Minimatch(ignoredName, matchBase: true, dot: true)
-      return true if ignoredMinimatch.match(path)
+      isAMatch = minimatch(path, ignoredName, { matchBase: true, dot: true })
+      return true if isAMatch
     return false
 
 module.exports = RegexMatcherUtil
