@@ -14,23 +14,35 @@ Manage TODOs, NOTEs, etc. from inside Atom.
 
 
 ##### Config
-To add additional strings to check for extend the config.cson file, which can be found at File > Open Your Config.
+* regexes: An array of objects. eg. [{ regexName: "FIXME", regexString: "/\\b@?TODO:?\\s(.+$)/g" }]
+* ignoredNames: An array of strings. eg. [ '*/node_modules/' ]
 
-Below are the default settings:
-
+Note: the config for todo-manager will be empty since the default values aren't saved to the config file.
+If you want to keep the default settings you will also need to include the values below:
 ````coffee
 "todo-manager":
-  regexes: [
-    {
-      regexName: "TODO"
-      regexString: "/\\b@?TODO:?\\s(.+$)/g"
-    }
-    {
-      regexName: "NOTE"
-      regexString: "/\\b@?NOTE:?\\s(.+$)/g"
-  ]
+    regexes: [
+      {
+        regexName: "TODO"
+        regexString: "/\\b@?TODO:?\\s(.+$)/g"
+      }
+      {
+        regexName: "NOTE"
+        regexString: "/\\b@?NOTE:?\\s(.+$)/g"
+      }
+      {
+        regexName: "FIXME"
+        regexString: "/\\b@?FIXME:?\\s(.+$)/g"
+      }
+    ]
+    ignoredNames: [
+      "*/node_modules/"
+      "*/vendor/"
+      "*/bower_components/"
+    ]
 ````
-Note: Adding too many regexes can cause performance problems.
+Note: 
+* Adding too many regexes can cause performance problems.
 
 
 ##### Future Plans
