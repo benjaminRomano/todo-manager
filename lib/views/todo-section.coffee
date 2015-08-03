@@ -1,4 +1,4 @@
-{View} = require('space-pen')
+{View, $} = require('space-pen')
 TodoElement = require('./todo-element')
 
 
@@ -13,7 +13,7 @@ class TodoSection extends View
           for match in matches
             @subview 'todo-element', new TodoElement(match: match)
 
-  initialize: ({@regexName}) ->
+  initialize: () ->
 
   setActive: (active) ->
     if active
@@ -22,8 +22,8 @@ class TodoSection extends View
       @hide()
 
   destroy: ->
-    for child in @matches.children
-      child.destroy()
+    for child in @matches.children()
+      child = $(child).view()
       child.remove()
 
 module.exports = TodoSection

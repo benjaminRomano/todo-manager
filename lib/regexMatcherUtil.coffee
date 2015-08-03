@@ -1,4 +1,5 @@
-{Minimatch} = require 'minimatch'
+{Minimatch} = require('minimatch')
+path = require('path')
 
 class RegexMatcherUtil
   constructor: () ->
@@ -11,11 +12,20 @@ class RegexMatcherUtil
     newMatch =
       matchText: matchText
       regexName: regexName
-      filePath: filePath,
-      relativePath: atom.project.relativize(filePath)
+      filePath: filePath
+      relativePath: @getRelativePath(filePath)
       position: match.range[0]
 
     return newMatch
+
+  getRelativePath: (filePath) ->
+    [projectPath, relativePath] = atom.project.relativizePath(filePath)
+
+    if atom.project.getPaths().length == 1
+      return relativePath
+
+    dirs = projectPath.split(path.sep)
+    return path.join(dirs[dirs.length - 1], relativePath)
 
   # {regexString, regexName}
   getMatches: (regexes, ignoredNames, options) ->
@@ -85,6 +95,9 @@ class RegexMatcherUtil
     return deferred.promise
 
   isIgnored: (path, ignoredNames) ->
+    if not path
+      return false
+      
     for ignoredName in ignoredNames
       ignoredMinimatch = new Minimatch(ignoredName, matchBase: true, dot: true)
       return true if ignoredMinimatch.match(path)

@@ -17,6 +17,4 @@ class TodoElement extends View
       initialColumn: position[1]
       })
 
-  destroy: ->
-
 module.exports = TodoElement
