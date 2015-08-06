@@ -1,3 +1,6 @@
+## 0.1.6
+* Updated Todo-Manager to use v0.1.0 of bottom-dock-service
+
 ## 0.1.5
 * Fixed ignoredName defaults
 

@@ -1,4 +1,5 @@
-{CompositeDisposable} = require 'atom'
+{CompositeDisposable} = require('atom')
+{BasicTabButton} = require('atom-bottom-dock')
 RegexMatcherUtil = require('./regexMatcherUtil')
 TodoManager = require('./views/todo-manager')
 
@@ -50,9 +51,17 @@ module.exports =
 
   add: ->
     if @bottomDock
-      newTodoPane = new TodoManager()
-      @todoPanes.push(newTodoPane)
-      @bottomDock.addPane(newTodoPane, 'TODO')
+      newPane = new TodoManager()
+      @todoPanes.push(newPane)
+
+      config =
+        name: 'TODO'
+        id: newPane.getId()
+        active: newPane.isActive()
+
+      newTabButton = new BasicTabButton(config)
+
+      @bottomDock.addPane(newPane, newTabButton)
 
   deactivate: ->
     @subscriptions.dispose()
