@@ -1,3 +1,8 @@
+## 0.2.0
+* Changed todo-manger to use table-sorter to display information
+* Removed group by filters
+* Moved search in filter to toolbar
+
 ## 0.1.6
 * Updated Todo-Manager to use v0.1.0 of bottom-dock-service
 

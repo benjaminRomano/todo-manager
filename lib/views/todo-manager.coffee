@@ -20,11 +20,11 @@ class TodoManager extends DockPaneView
       label: 'Search in:'
       activeFilter: FilterConstants.file.openFiles
       filters: [{
-        name: FilterConstants.file.allFiles
+        value: FilterConstants.file.allFiles
       }, {
-        name: FilterConstants.file.openFiles
+        value: FilterConstants.file.openFiles
       }, {
-        name: FilterConstants.file.currentFile
+        value: FilterConstants.file.currentFile
       }]
 
     @fileFilterSelector = new FilterSelector fileFiltersConfig
