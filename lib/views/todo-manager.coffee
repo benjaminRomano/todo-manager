@@ -1,32 +1,35 @@
-{DockPaneView} = require 'atom-bottom-dock'
+{DockPaneView, SortableTable, Toolbar, FilterSelector} = require 'atom-bottom-dock'
 {CompositeDisposable} = require 'atom'
 {$} = require 'space-pen'
 _ = require 'lodash'
 
 RegexMatcherUtil = require '../regexMatcherUtil'
-TodoSection = require './todo-section'
 FilterConstants = require '../filter-constants'
 
-
-# TODO: Move filters to constants
 class TodoManager extends DockPaneView
   @content: ->
-    @div class: 'todo-manager', =>
-      @div outlet: 'filters', class: 'filters', =>
-        @label class: 'filter-label', 'Search in:'
-        @div outlet: 'fileFiltersContainer', class: 'btn-group', =>
-          @button class: 'btn', click: 'getMatchesForAllFiles', FilterConstants.file.allFiles
-          @button class: 'btn', click: 'getMatchesForOpenFiles', FilterConstants.file.openFiles
-          @button class: 'btn', click: 'getMatchesForCurrentFile', FilterConstants.file.currentFile
-        @label class: 'filter-label', 'Group by:'
-        @div outlet: 'groupByFiltersContainer', class: 'btn-group', =>
-          @button class: 'btn selected', click: 'groupByFile', 'File'
-          @button class: 'btn', click: 'groupByRegex', 'Regex'
-      @div outlet: 'todoSectionsContainer', class: 'todo-sections-container', ->
+    @div class: 'todo-manager', style: 'display:flex;', =>
+      @subview 'toolbar', new Toolbar()
+      @subview 'todoTable', new SortableTable headers: ['Regex', 'Message', 'Path', 'Line']
 
   initialize: ->
     super()
     @regexMatcherUtil = new RegexMatcherUtil()
+
+    fileFiltersConfig =
+      label: 'Search in:'
+      activeFilter: FilterConstants.file.openFiles
+      filters: [{
+        name: FilterConstants.file.allFiles
+      }, {
+        name: FilterConstants.file.openFiles
+      }, {
+        name: FilterConstants.file.currentFile
+      }]
+
+    @fileFilterSelector = new FilterSelector fileFiltersConfig
+    @fileFilterSelector.onDidChangeFilter => @refresh()
+    @toolbar.addLeftTile item: @fileFilterSelector, priority: 0
 
     @subscriptions = new CompositeDisposable()
     @subscriptions.add atom.workspace.onDidAddTextEditor @onPaneChanges
@@ -36,69 +39,51 @@ class TodoManager extends DockPaneView
 
     @getMatchesForOpenFiles()
 
-
   onPaneChanges: =>
-    activeFileFilter = @getActiveFilter @fileFiltersContainer
+    activeFileFilter = @fileFilterSelector.getActiveFilter()
     if activeFileFilter == FilterConstants.file.openFiles
       @getMatchesForOpenFiles()
     else if activeFileFilter == FilterConstants.file.currentFile
       @getMatchesForCurrentFile()
 
   getMatchesForAllFiles: =>
-    @setActiveFilter @fileFiltersContainer, FilterConstants.file.allFiles
+    @fileFilterSelector.setActiveFilter FilterConstants.file.allFiles
     @getMatches paths: '*'
 
   getMatchesForOpenFiles: =>
-    @setActiveFilter @fileFiltersContainer, FilterConstants.file.openFiles
+    @fileFilterSelector.setActiveFilter FilterConstants.file.openFiles
     @getMatches fetchFromWorkspace: true
 
   getMatchesForCurrentFile: =>
-    @setActiveFilter @fileFiltersContainer, FilterConstants.file.currentFile
+    @fileFilterSelector.setActiveFilter FilterConstants.file.currentFile
     @getMatches fetchFromWorkspace: true, currEditorOnly: true
 
-  setActiveFilter: (container, text) ->
-    for child in container.children()
-      child = $(child)
-      if child.text() == text
-        child.addClass 'selected'
-      else
-        child.removeClass 'selected'
+  addMatches: (matches) =>
+    @todoTable.body.empty()
 
-  getActiveFilter: (container) ->
-    for child in container.children()
-      child = $(child)
-      if child.hasClass 'selected'
-        return child.text()
-    return null
+    for match in matches
+      row = $("<tr>
+        <td>#{match.regexName}</td>
+        <td>#{match.matchText}</td>
+        <td>#{match.relativePath}</td>
+        <td>#{match.position[0]}</td>
+      </tr>")
 
-  addMatches: (nestedGroupedMatches) =>
-    @todoSectionsContainer.empty()
+      do (match) =>
+        row.on 'click', =>
+          @goToMatch match.filePath, match.position
 
-    #value is another grouping
-    for key, groupedMatches of nestedGroupedMatches
-      todoSection = new TodoSection {key, groupedMatches}
-      @todoSectionsContainer.append todoSection
+      @todoTable.body.append row
 
-  groupMatches: (matches) =>
-    @matches = matches
-    groupByFilter = @getActiveFilter @groupByFiltersContainer
-    if not groupByFilter
-      @setActiveFilter @groupByFiltersContainer, FilterConstants.groupBy.file
-      groupByFilter = FilterConstants.groupBy.file
+    @todoTable.body.trigger 'update'
 
-    if groupByFilter == FilterConstants.groupBy.file
-      groupedMatches = _.groupBy matches, (match) -> match.relativePath
-      for filePath, matches of groupedMatches
-        groupedMatches[filePath] = _.groupBy matches, (match) -> match.regexName
-      return groupedMatches
-    else
-      groupedMatches = _.groupBy matches, (match) -> match.regexName
-      for filePath, matches of groupedMatches
-        groupedMatches[filePath] = _.groupBy matches, (match) -> match.relativePath
-      return groupedMatches
+  goToMatch: (filePath, position) ->
+    atom.workspace.open filePath,
+      initialLine: position[0]
+      initialColumn: position[1]
 
   getMatches: (options) ->
-    @todoSectionsContainer.empty()
+    @todoTable.body.empty()
 
     regexes = atom.config.get 'todo-manager.regexes'
     ignoredNames = atom.config.get 'todo-manager.ignoredNames'
@@ -106,20 +91,10 @@ class TodoManager extends DockPaneView
     allIgnoredNames = ignoredNames.concat globallyIgnoredNames
 
     @regexMatcherUtil.getMatches(regexes, allIgnoredNames, options)
-      .then(@groupMatches)
       .then(@addMatches)
 
-  groupByFile: ->
-    @setActiveFilter @groupByFiltersContainer, FilterConstants.groupBy.file
-    @addMatches(@groupMatches(@matches)) if @matches
-
-  groupByRegex: ->
-    @setActiveFilter @groupByFiltersContainer, FilterConstants.groupBy.regex
-    @addMatches(@groupMatches(@matches)) if @matches
-
-
-  refresh: ->
-    fileFilter = @getActiveFilter @fileFiltersContainer
+  refresh: =>
+    fileFilter = @fileFilterSelector.getActiveFilter()
     if fileFilter == FilterConstants.file.allFiles
       @getMatchesForAllFiles()
     else if fileFilter == FilterConstants.file.openFiles
@@ -131,11 +106,6 @@ class TodoManager extends DockPaneView
 
   destroy: ->
     @subscriptions?.dispose
-    if @todoSectionsContainer
-      for todoSection in @todoSectionsContainer.children()
-        todoSection = $(todoSection).view()
-        todoSection.destroy()
-        todoSection.remove()
     @remove()
 
 module.exports = TodoManager
