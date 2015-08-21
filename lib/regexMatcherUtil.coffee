@@ -1,5 +1,5 @@
-minimatch = require('minimatch')
-path = require('path')
+minimatch = require 'minimatch'
+path = require 'path'
 
 class RegexMatcherUtil
   constructor: () ->
@@ -13,44 +13,44 @@ class RegexMatcherUtil
       matchText: matchText
       regexName: regexName
       filePath: filePath
-      relativePath: @getRelativePath(filePath)
+      relativePath: @getRelativePath filePath
       position: match.range[0]
 
     return newMatch
 
   getRelativePath: (filePath) ->
-    [projectPath, relativePath] = atom.project.relativizePath(filePath)
+    [projectPath, relativePath] = atom.project.relativizePath filePath
 
     if atom.project.getPaths().length == 1
       return relativePath
 
-    dirs = projectPath.split(path.sep)
+    dirs = projectPath.split path.sep
     return path.join(dirs[dirs.length - 1], relativePath)
 
   # {regexString, regexName}
   getMatches: (regexes, ignoredNames, options) ->
-    options = options or { paths: '*'}
+    options = options or paths: '*'
     searchPromises = []
 
     for regex in regexes
-      regExp = @makeRegexObj(regex.regexString)
+      regExp = @makeRegexObj regex.regexString
       continue unless regExp
       if options.fetchFromWorkspace
         searchPromises.push(@fetchFromWorkspace(regExp, regex.regexName, ignoredNames, options))
       else
         searchPromises.push(@fetchRegexItem(regExp, regex.regexName, ignoredNames, options))
 
-    return Promise.resolve([]) unless searchPromises.length
+    return Promise.resolve [] unless searchPromises.length
 
-    return Promise.all(searchPromises).then((searchResults) ->
-      return searchResults.reduce((a, b) -> return a.concat(b))
+    Promise.all(searchPromises).then((searchResults) ->
+      searchResults.reduce((a, b) -> return a.concat b)
     )
 
   makeRegexObj: (regexString) ->
     pattern = regexString.match(/\/(.+)\//)?[1]
     flags = regexString.match(/\/(\w+$)/)?[1]
     return null unless pattern
-    new RegExp(pattern, flags)
+    new RegExp pattern, flags
 
   fetchRegexItem: (regex, regexName, ignoredNames, options) ->
     ignoredNames = ignoredNames or []
@@ -58,14 +58,14 @@ class RegexMatcherUtil
     searchResults = []
     promise = atom.workspace.scan(regex, options, (matchesForFile, error) =>
       return unless matchesForFile
-      return if @isIgnored(matchesForFile.filePath, ignoredNames)
+      return if @isIgnored matchesForFile.filePath, ignoredNames
 
       for match in matchesForFile.matches
-        cleanedUpMatch = @cleanUpMatch(match, matchesForFile.filePath, regexName, regex)
-        searchResults.push(cleanedUpMatch)
+        cleanedUpMatch = @cleanUpMatch match, matchesForFile.filePath, regexName, regex
+        searchResults.push cleanedUpMatch
     )
 
-    return promise.then(-> return searchResults)
+    promise.then -> searchResults
 
   fetchFromWorkspace: (regex, regexName, ignoredNames, options) ->
     currEditorOnly = !!options?.currEditorOnly
@@ -74,7 +74,7 @@ class RegexMatcherUtil
     editors = []
     if currEditorOnly
       activeTextEditor = atom.workspace.getActiveTextEditor()
-      editors = [].concat(activeTextEditor) if activeTextEditor
+      editors = [].concat activeTextEditor  if activeTextEditor
     else
       editors = atom.workspace.getTextEditors()
 
@@ -82,24 +82,23 @@ class RegexMatcherUtil
     for editor in editors
       editor.scan regex, (match, error) =>
         return unless match
-        return if @isIgnored(editor.getPath(), ignoredNames)
+        return if @isIgnored editor.getPath(), ignoredNames
 
         basicMatch =
           matchText: match.matchText,
           range: match.range.serialize()
 
-        cleanedUpMatch = @cleanUpMatch(basicMatch, editor.getPath(), regexName, regex)
-        searchResults.push(cleanedUpMatch)
+        cleanedUpMatch = @cleanUpMatch basicMatch, editor.getPath(), regexName, regex
+        searchResults.push cleanedUpMatch
 
-    deferred.resolve(searchResults)
-    return deferred.promise
+    deferred.resolve searchResults
+    deferred.promise
 
   isIgnored: (path, ignoredNames) ->
-    if not path
-      return true
+    return true unless path
 
     for ignoredName in ignoredNames
-      isAMatch = minimatch(path, ignoredName, { matchBase: true, dot: true })
+      isAMatch = minimatch path, ignoredName, matchBase: true, dot: true
       return true if isAMatch
     return false
 

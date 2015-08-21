@@ -1,7 +1,7 @@
-{CompositeDisposable} = require('atom')
-{BasicTabButton} = require('atom-bottom-dock')
-RegexMatcherUtil = require('./regexMatcherUtil')
-TodoManager = require('./views/todo-manager')
+{CompositeDisposable} = require 'atom'
+{BasicTabButton} = require 'atom-bottom-dock'
+RegexMatcherUtil = require './regexMatcherUtil'
+TodoManager = require './views/todo-manager'
 
 module.exports =
   config:
@@ -38,35 +38,27 @@ module.exports =
 
     packageFound = atom.packages.getAvailablePackageNames()
       .indexOf('bottom-dock') != -1
-    if not packageFound
-      atom.notifications.addError('Could not find Bottom-Dock', {
+
+    unless packageFound
+      atom.notifications.addError 'Could not find Bottom-Dock',
         detail: 'Todo-Manager: The bottom-dock package is a dependency. \n
         Learn more about bottom-dock here: https://atom.io/packages/bottom-dock'
         dismissable: true
-      })
 
-    @subscriptions.add(atom.commands.add('atom-workspace',
-    'todo-manager:add': => @add())
-    )
+    @subscriptions.add atom.commands.add 'atom-workspace',
+      'todo-manager:add': => @add()
 
   add: ->
-    if @bottomDock
-      newPane = new TodoManager()
-      @todoPanes.push(newPane)
+    return unless @bottomDock
 
-      config =
-        name: 'TODO'
-        id: newPane.getId()
-        active: newPane.isActive()
+    newPane = new TodoManager()
+    @todoPanes.push newPane
 
-      newTabButton = new BasicTabButton(config)
-
-      @bottomDock.addPane(newPane, newTabButton)
+    @bottomDock.addPane newPane, 'TODO'
 
   deactivate: ->
     @subscriptions.dispose()
-    for pane in @todoPanes
-      @bottomDock.deletePane(pane.getId())
+    @bottomDock.deletePane pane.getId() for pane in @todoPanes
 
   consumeBottomDock: (@bottomDock) ->
     @add()

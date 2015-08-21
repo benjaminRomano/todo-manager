@@ -1,5 +1,5 @@
-{View, $} = require('space-pen')
-TodoElement = require('./todo-element')
+{View, $} = require 'space-pen'
+TodoElement = require './todo-element'
 
 
 class TodoSection extends View
@@ -16,10 +16,7 @@ class TodoSection extends View
   initialize: () ->
 
   setActive: (active) ->
-    if active
-      @show()
-    else
-      @hide()
+    if active then @show() else @hide()
 
   destroy: ->
     for child in @matches.children()

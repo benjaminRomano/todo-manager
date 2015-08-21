@@ -1,4 +1,4 @@
-{View} = require('space-pen')
+{View} = require 'space-pen'
 
 
 class TodoElement extends View
@@ -9,12 +9,11 @@ class TodoElement extends View
   initialize: ({@match}) ->
 
   onClick: =>
-    @goToMatch(@match.filePath, @match.position)
+    @goToMatch @match.filePath, @match.position
 
   goToMatch: (filePath, position) ->
-    atom.workspace.open(filePath, {
+    atom.workspace.open filePath,
       initialLine: position[0]
       initialColumn: position[1]
-      })
 
 module.exports = TodoElement
