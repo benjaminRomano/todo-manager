@@ -9,7 +9,7 @@ Manage TODOs, NOTEs, etc. from inside Atom.
 * ctrl-k ctrl-r: refreshes window
 * ctrl-k ctrl-c: closes window
 * ctrl-k ctrl-m: adds todo pane
-* right-click table headers: reset table header widths
+* shift-click headers: sort using multiple columns
 
 ![image](https://cloud.githubusercontent.com/assets/9221137/9417752/61c4f7c6-4814-11e5-9e3f-13120ae032ea.png)
 

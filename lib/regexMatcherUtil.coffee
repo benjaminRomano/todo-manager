@@ -21,7 +21,7 @@ class RegexMatcherUtil
   getRelativePath: (filePath) ->
     [projectPath, relativePath] = atom.project.relativizePath filePath
 
-    if atom.project.getPaths().length == 1
+    if atom.project.getPaths().length <= 1
       return relativePath
 
     dirs = projectPath.split path.sep

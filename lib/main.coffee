@@ -33,7 +33,7 @@ module.exports =
 
   activate: ->
     @subscriptions = new CompositeDisposable()
-    @todoPanes = []
+    @panes = []
     results = []
 
     packageFound = atom.packages.getAvailablePackageNames()
@@ -52,13 +52,15 @@ module.exports =
     return unless @bottomDock
 
     newPane = new TodoManager()
-    @todoPanes.push newPane
+    @panes.push newPane
 
     @bottomDock.addPane newPane, 'TODO'
 
   deactivate: ->
     @subscriptions.dispose()
-    @bottomDock.deletePane pane.getId() for pane in @todoPanes
+    @bottomDock.deletePane pane.getId() for pane in @panes
 
   consumeBottomDock: (@bottomDock) ->
+    @subscriptions.add @bottomDock.onDidFinishResizing =>
+      pane.resize() for pane in @panes
     @add()

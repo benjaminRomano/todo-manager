@@ -1,4 +1,4 @@
-{DockPaneView, SortableTable, Toolbar, FilterSelector} = require 'atom-bottom-dock'
+{DockPaneView, TableView, Toolbar, FilterSelector} = require 'atom-bottom-dock'
 {CompositeDisposable} = require 'atom'
 {$} = require 'space-pen'
 _ = require 'lodash'
@@ -10,11 +10,23 @@ class TodoManager extends DockPaneView
   @content: ->
     @div class: 'todo-manager', style: 'display:flex;', =>
       @subview 'toolbar', new Toolbar()
-      @subview 'todoTable', new SortableTable headers: ['Regex', 'Message', 'Path', 'Line']
 
   initialize: ->
     super()
     @regexMatcherUtil = new RegexMatcherUtil()
+
+    columns = [
+      {id: "regex", name: "Regex", field: "regex", sortable: true }
+      {id: "mesage", name: "Message", field: "message", sortable: true }
+      {id: "path", name: "Path", field: "path", sortable: true }
+      {id: "line", name: "Line", field: "line", sortable: true }
+    ]
+
+    @table = new TableView [], columns
+    @append @table
+
+    @table.onDidClickGridItem (row) =>
+      @goToMatch row.match.filePath, row.match.position
 
     fileFiltersConfig =
       label: 'Search in:'
@@ -37,7 +49,15 @@ class TodoManager extends DockPaneView
     @subscriptions.add atom.workspace.onDidChangeActivePaneItem @onPaneChanges
     @subscriptions.add atom.workspace.onDidChangeActivePaneItem @onPaneChanges
 
-    @getMatchesForOpenFiles()
+    @table.onDidFinishAttaching =>
+      @getMatchesForOpenFiles()
+
+  setActive: (active) ->
+    super(active)
+    @table?.resize(true) if active
+
+  resize: ->
+    @table.resize(true)
 
   onPaneChanges: =>
     activeFileFilter = @fileFilterSelector.getActiveFilter()
@@ -59,23 +79,18 @@ class TodoManager extends DockPaneView
     @getMatches fetchFromWorkspace: true, currEditorOnly: true
 
   addMatches: (matches) =>
-    @todoTable.body.empty()
+    @table.deleteAllRows()
 
+    data = []
     for match in matches
-      row = $("<tr>
-        <td>#{match.regexName}</td>
-        <td>#{match.matchText}</td>
-        <td>#{match.relativePath}</td>
-        <td>#{match.position[0]}</td>
-      </tr>")
+      data.push
+        regex: match.regexName
+        message: match.matchText
+        path: match.relativePath
+        line: match.position[0]
+        match: match
 
-      do (match) =>
-        row.on 'click', =>
-          @goToMatch match.filePath, match.position
-
-      @todoTable.body.append row
-
-    @todoTable.body.trigger 'update'
+    @table.addRows data
 
   goToMatch: (filePath, position) ->
     atom.workspace.open filePath,
@@ -83,7 +98,7 @@ class TodoManager extends DockPaneView
       initialColumn: position[1]
 
   getMatches: (options) ->
-    @todoTable.body.empty()
+    @table.deleteAllRows()
 
     regexes = atom.config.get 'todo-manager.regexes'
     ignoredNames = atom.config.get 'todo-manager.ignoredNames'

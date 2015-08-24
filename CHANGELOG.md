@@ -1,3 +1,6 @@
+## 0.2.1
+* Replaced tablesorter with slickgrid
+
 ## 0.2.0
 * Changed todo-manger to use table-sorter to display information
 * Removed group by filters
