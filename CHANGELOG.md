@@ -1,5 +1,9 @@
+## 0.2.3
+* Fix for bug that caused tabs at top not to be draggable
+
 ## 0.2.2
 * Fix for jquery module not loaded
+
 ## 0.2.1
 * Replaced tablesorter with slickgrid
 
