@@ -1,3 +1,6 @@
+## 0.2.4
+* Actually fixed bug this time
+
 ## 0.2.3
 * Fix for bug that caused tabs at top not to be draggable
 
