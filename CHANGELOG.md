@@ -1,5 +1,9 @@
+## 0.2.3
+* Added more error handling in RegexMatcherUtil
+
 ## 0.2.2
 * Fix for jquery module not loaded
+
 ## 0.2.1
 * Replaced tablesorter with slickgrid
 
