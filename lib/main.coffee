@@ -1,5 +1,5 @@
 {$} = require 'space-pen'
-window.jQuery = $
+window.jQuery = require 'jquery'
 {CompositeDisposable} = require 'atom'
 {BasicTabButton} = require 'atom-bottom-dock'
 RegexMatcherUtil = require './regexMatcherUtil'
