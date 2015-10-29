@@ -1,3 +1,6 @@
+## 0.2.6
+* Update atom-bottom-dock version. Fixes table sorting issues
+
 ## 0.2.5
 * Added more error handling in RegexMatcherUtil
 
