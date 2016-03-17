@@ -1,3 +1,6 @@
+## 0.2.7
+* Added isInitial param when adding new pane.
+
 ## 0.2.6
 * Update atom-bottom-dock version. Fixes table sorting issues
 

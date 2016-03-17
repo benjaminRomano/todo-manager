@@ -50,13 +50,13 @@ module.exports =
     @subscriptions.add atom.commands.add 'atom-workspace',
       'todo-manager:add': => @add()
 
-  add: ->
+  add: (isInitial) ->
     return unless @bottomDock
 
     newPane = new TodoManager()
     @panes.push newPane
 
-    @bottomDock.addPane newPane, 'TODO'
+    @bottomDock.addPane newPane, 'TODO', isInitial
 
   deactivate: ->
     @subscriptions.dispose()
@@ -65,4 +65,4 @@ module.exports =
   consumeBottomDock: (@bottomDock) ->
     @subscriptions.add @bottomDock.onDidFinishResizing =>
       pane.resize() for pane in @panes
-    @add()
+    @add true
