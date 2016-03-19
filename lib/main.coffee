@@ -57,6 +57,9 @@ module.exports =
     @panes.push newPane
 
     @bottomDock.addPane newPane, 'TODO', isInitial
+    
+    @bottomDock.onDidToggle =>
+        newPane.resize() if newPane.active && @bottomDock.isActive()
 
   deactivate: ->
     @subscriptions.dispose()

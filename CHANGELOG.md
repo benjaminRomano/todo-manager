@@ -1,3 +1,6 @@
+## 0.2.8
+* Fixed header sizing issue 
+
 ## 0.2.7
 * Added isInitial param when adding new pane.
 
