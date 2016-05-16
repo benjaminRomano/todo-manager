@@ -1,7 +1,7 @@
 {
   "name": "todo-manager",
   "main": "./lib/main",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Manage TODOs, NOTEs and more from inside your editor",
   "keywords": [
     "todo",
