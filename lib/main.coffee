@@ -15,6 +15,9 @@ module.exports =
       }, {
         regexName: 'NOTE',
         regexString: '/\\b@?NOTE:?\\s(.+$)/g'
+      }, {
+        regexName: 'FIXME',
+        regexString: '/\\b@?FIXME:?\\s(.+$)/g'
       }]
       items:
         type: 'object'
@@ -57,7 +60,7 @@ module.exports =
     @panes.push newPane
 
     @bottomDock.addPane newPane, 'TODO', isInitial
-    
+
     @bottomDock.onDidToggle =>
         newPane.resize() if newPane.active && @bottomDock.isActive()
 
