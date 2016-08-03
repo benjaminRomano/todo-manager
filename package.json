@@ -1,7 +1,7 @@
 {
   "name": "todo-manager",
   "main": "./lib/main",
-  "version": "0.2.6",
+  "version": "0.2.9",
   "description": "Manage TODOs, NOTEs and more from inside your editor",
   "keywords": [
     "todo",
@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "ansi-to-html": "^0.3.0",
-    "atom-bottom-dock": "^0.5.1",
+    "atom-bottom-dock": "^0.5.2",
     "jquery": "^2.1.4",
     "lodash": "^3.10.0",
     "minimatch": "^2.0.10",
