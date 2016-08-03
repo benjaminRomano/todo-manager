@@ -1,5 +1,14 @@
+## 0.2.9
+* Fixed issue with Promise.defer
+
+## 0.2.8
+* Fixed header sizing issue
+
+## 0.2.7
+* Added isInitial param when adding new pane.
+
 ## 0.2.6
-* Fixed issue with promise.defer
+* Update atom-bottom-dock version. Fixes table sorting issues
 
 ## 0.2.5
 * Added more error handling in RegexMatcherUtil
