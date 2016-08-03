@@ -1,3 +1,6 @@
+## 0.2.6
+* Fixed issue with promise.defer
+
 ## 0.2.5
 * Added more error handling in RegexMatcherUtil
 

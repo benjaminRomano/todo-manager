@@ -69,7 +69,6 @@ class RegexMatcherUtil
 
   fetchFromWorkspace: (regex, regexName, ignoredNames, options) ->
     currEditorOnly = !!options?.currEditorOnly
-    deferred = Promise.defer()
 
     editors = []
     if currEditorOnly
@@ -90,9 +89,10 @@ class RegexMatcherUtil
 
         cleanedUpMatch = @cleanUpMatch basicMatch, editor.getPath(), regexName, regex
         searchResults.push cleanedUpMatch
-
-    deferred.resolve searchResults
-    deferred.promise
+    console.log('all good')
+    return new Promise((resolve, reject) => resolve(searchResults))
+    # deferred.resolve searchResults
+    # deferred.promise
 
   isIgnored: (path, ignoredNames) ->
     return true unless path
